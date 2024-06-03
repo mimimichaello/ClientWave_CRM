@@ -22,7 +22,7 @@ class RegisterEmployeeView(CreateView):
         'title': 'Регистрация'
     }
 
-    success_url = reverse_lazy('employees/login_employee.html')
+    success_url = reverse_lazy('login_employee')
 
 
 class LoginEmployeeView(LoginView):
@@ -39,6 +39,10 @@ class LoginEmployeeView(LoginView):
 def logout_view(request):
     logout(request)
     return redirect('login_employee')
+
+
+def home_view(request):
+    return render(request, 'employees/home.html', {'title': 'Главная страница'})
 
 
 def personal_account(request):

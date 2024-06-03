@@ -1,0 +1,186 @@
+{% extends "users/base.html" %}
+{% load static %}
+
+
+{% block content %}
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand text-warning text-decoration-none" href="{% url "account_agent" %}">ClientWave CRM</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-link text-decoration-none" href="{% url "account_agent" %}">Создать сделку</a>
+          <a class="nav-link text-decoration-none" href="{% url "account_agent" %}">Добавить клиента</a>
+          <a class="nav-link text-decoration-none" href="{% url "account_agent" %}">Задачи</a>
+          <a class="nav-link text-decoration-none text-primary" href="{% url "logout" %}"style="margin-left: 850px;">Выйти</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+<div class="container">
+    <div class="main-body mt-4">
+          <div class="row gutters-sm">
+            <div class="col-md-4 mb-3">
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-flex flex-column align-items-center text-center mt-3">
+                    <img src="https://yt3.googleusercontent.com/ytc/AGIKgqPUTn9hyJIRqLtm46wnUCLY6VOq2EcAYGyWRqPe=s900-c-k-c0x00ffffff-no-rj" alt="Admin" class="rounded-circle" width="150">
+                    <div class="mt-4">
+                      <h4 class="mt-3">{{ user.first_name}} {{ user.last_name}}</h4>
+                      <p class="text-secondary mb-1">{{ user.get_role_display }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-8">
+              <div class="card">
+                <div class="card-body">
+                  <h3 class="mb-2 text-primary">Информация о клиентах</h3>
+                    <hr>
+                  <div class="mt-3">
+                      <table class="table table-bordered border-info">
+                        <thead>
+                          <tr>
+                            <th scope="col">№</th>
+                            <th scope="col">Имя</th>
+                            <th scope="col">Фамилия</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Телефон</th>
+                            <th scope="col">Адрес</th>
+                            <th scope="col">Статус</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for transaction in page_obj %}
+                              <tr class="{% if transaction.status == 'paid' %}table-success{% elif transaction.status == 'pending' %}table-info{% elif transaction.status == 'cancelled' %}table-danger{% elif transaction.status == 'refunded' %}table-warning{% endif %}">
+                                  <th scope="row">{{ forloop.counter }}</th>
+                                  <td>{{ transaction.customer.first_name }}</td>
+                                  <td>{{ transaction.customer.last_name }}</td>
+                                  <td>{{ transaction.customer.email }}</td>
+                                  <td>{{ transaction.customer.phone }}</td>
+                                  <td>{{ transaction.customer.address }}</td>
+                                  <td>{{ transaction.status }}</td>
+                              </tr>
+                          {% endfor %}
+                      </tbody>
+                      <div class="pagination">
+                          <span class="step-links">
+                              {% if page_obj.has_previous %}
+                                  <a href="?page=1" style="text-decoration: none">&laquo; Первая</a>
+                                  <a href="?page={{ page_obj.previous_page_number }}" style="text-decoration: none">Предыдущая</a>
+                              {% endif %}
+
+                              <span class="current">
+                                  Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+                              </span>
+
+                              {% if page_obj.has_next %}
+                                  <a href="?page={{ page_obj.next_page_number }}" style="text-decoration: none">Следующая</a>
+                                  <a href="?page={{ page_obj.paginator.num_pages }}" style="text-decoration: none">Последняя &raquo;</a>
+                              {% endif %}
+                          </span>
+                        </div>
+                      </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 mb-1">
+              <div class="card">
+                  <div class="card-body">
+                      <div id="transaction-status-chart" style="height: 423px; padding-top: 30px;"></div>
+                      <script src="https://cdn.plot.ly/plotly-2.3.0.min.js"></script>
+                              <script>
+                                    var chartData = {{ chart_data|safe }};
+
+                                    var trace1 = {
+                                        labels: chartData.labels,
+                                        values: chartData.values,
+                                        type: 'pie'
+                                    };
+
+                                    var layout = {
+                                        title: 'Диаграмма статуса транзакции',
+                                    };
+
+                                    Plotly.newPlot('transaction-status-chart', [trace1], layout);
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                      <div class="card">
+                        <div class="card-body">
+                          <h5 class="mb-2 text-primary">Обращения клиентов</h5>
+                            <hr>
+                            <div class="mt-3">
+                              <table class="table table-dark table-striped table-bordered border-info">
+                                <thead class="table-success">
+                                  <tr>
+                                    <th scope="col">№</th>
+                                    <th scope="col">Имя</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Телефон</th>
+                                    <th scope="col">Дата обращения</th>
+                                    <th scope="col">Тема обращения</th>
+                                    <th scope="col">Способ связи</th>
+                                    <th scope="col">Статус</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <td>1</td>
+                                    <td>Иванов Иван</td>
+                                    <td>ivan@mail.ru</td>
+                                    <td>89588551884</td>
+                                    <td class="text-center">01.06.2024</td>
+                                    <td>Проблема с оплатой</td>
+                                    <td class="text-center"><i class="bi bi-envelope-exclamation-fill"></i></td>
+                                    <td>В обработке</td>
+                                  </tr>
+                                  <tr>
+                                    <td>2</td>
+                                    <td>Петрова Мария</td>
+                                    <td>mar@mail.ru</td>
+                                    <td>89588551884</td>
+                                    <td class="text-center">01.06.2024</td>
+                                    <td>Запрос на консультацию</td>
+                                    <td class="text-center"><i class="bi bi-telephone-fill"></i></td>
+                                    <td>Выполнено</td>
+                                  </tr>
+                                  <tr>
+                                    <td>3</td>
+                                    <td>Смирнова Екатерина</td>
+                                    <td>ekat@mail.ru</td>
+                                    <td>89588551884</td>
+                                    <td class="text-center">01.06.2024</td>
+                                    <td>Консультация</td>
+                                    <td class="text-center"><i class="bi bi-person-walking"></i></td>
+                                    <td>Выполнено</td>
+                                  </tr>
+                                  <tr>
+                                    <td>4</td>
+                                    <td>Добронравов Олег</td>
+                                    <td>Dub@mail.ru</td>
+                                    <td>89588551884</td>
+                                    <td class="text-center">01.06.2024</td>
+                                    <td>Товар ненадлежащего качества</td>
+                                    <td class="text-center"><i class="bi bi-chat-left-dots-fill"></i></td>
+                                    <td>Выполнено</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock content %}

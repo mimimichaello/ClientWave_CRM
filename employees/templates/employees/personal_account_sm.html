@@ -1,0 +1,124 @@
+{% extends "employees/base.html" %}
+{% load static %}
+
+
+{% block content %}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container">
+      <a class="navbar-brand text-decoration-none text-warning" href="personal_account">ClientWave CRM</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+              <li class="nav-item"><a class="nav-link active" aria-current="page" href="personal_account">Личный кабинет</a></li>
+              <li class="nav-item"><a class="nav-link active" aria-current="page" href="logout_employee">Выйти</a></li>
+              <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Актив</a>
+                  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                      <li><a class="dropdown-item" href="personal_account">Создать сделку</a></li>
+                      <li><a class="dropdown-item" href="personal_account">Добавить клиента</a></li>
+                      <li><hr class="dropdown-divider" /></li>
+                      <li><a class="dropdown-item" href="personal_account">Задачи</a></li>
+                  </ul>
+              </li>
+          </ul>
+      </div>
+  </div>
+</nav>
+
+<div class="container">
+    <div class="main-body mt-4">
+          <div class="row gutters-sm">
+            <div class="col-md-4 mb-3">
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-flex flex-column align-items-center text-center mt-3">
+                    <img src="https://yt3.googleusercontent.com/ytc/AGIKgqPUTn9hyJIRqLtm46wnUCLY6VOq2EcAYGyWRqPe=s900-c-k-c0x00ffffff-no-rj" alt="Admin" class="rounded-circle" width="150">
+                    <div class="mt-4">
+                      <h4 class="mt-3">{{ employee.first_name}} {{ employee.last_name}}</h4>
+                      <p class="text-secondary mb-1">{{ employee.employee_category }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-8">
+              <div class="card">
+                <div class="card-body">
+                  <h3 class="mb-2 text-primary">Сотрудники</h3>
+                    <hr>
+                  <div class="mt-3">
+                      <table class="table table-bordered border-info">
+                        <thead>
+                          <tr>
+                            <th scope="col">№</th>
+                            <th scope="col">Имя</th>
+                            <th scope="col">Фамилия</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Должность</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for transaction in page_obj %}
+                              <tr class="{% if transaction.status == 'paid' %}table-success{% elif transaction.status == 'pending' %}table-info{% elif transaction.status == 'cancelled' %}table-danger{% elif transaction.status == 'refunded' %}table-warning{% endif %}">
+                                  <th scope="row">{{ forloop.counter }}</th>
+                                  <td>{{ transaction.customer.first_name }}</td>
+                                  <td>{{ transaction.customer.last_name }}</td>
+                                  <td>{{ transaction.customer.email }}</td>
+                                  <td>{{ transaction.customer.phone }}</td>
+                                  <td>{{ transaction.customer.address }}</td>
+                                  <td>{{ transaction.status }}</td>
+                              </tr>
+                          {% endfor %}
+                      </tbody>
+                      <div class="pagination">
+                          <span class="step-links">
+                              {% if page_obj.has_previous %}
+                                  <a href="?page=1" style="text-decoration: none">&laquo; Первая</a>
+                                  <a href="?page={{ page_obj.previous_page_number }}" style="text-decoration: none">Предыдущая</a>
+                              {% endif %}
+
+                              <span class="current">
+                                  Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+                              </span>
+
+                              {% if page_obj.has_next %}
+                                  <a href="?page={{ page_obj.next_page_number }}" style="text-decoration: none">Следующая</a>
+                                  <a href="?page={{ page_obj.paginator.num_pages }}" style="text-decoration: none">Последняя &raquo;</a>
+                              {% endif %}
+                          </span>
+                        </div>
+                      </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 mb-1">
+              <div class="card">
+                  <div class="card-body">
+                      <div id="transaction-status-chart" style="height: 423px; padding-top: 30px;"></div>
+                      <script src="https://cdn.plot.ly/plotly-2.3.0.min.js"></script>
+                              <script>
+                                    var chartData = {{ chart_data|safe }};
+
+                                    var trace1 = {
+                                        labels: chartData.labels,
+                                        values: chartData.values,
+                                        type: 'pie'
+                                    };
+
+                                    var layout = {
+                                        title: 'Диаграмма статуса транзакции',
+                                    };
+
+                                    Plotly.newPlot('transaction-status-chart', [trace1], layout);
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock content %}
