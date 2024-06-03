@@ -1,0 +1,26 @@
+@media screen and (min-width:1000px){
+    #mainBgn {
+      background: url('/static/img/logo3.png') no-repeat;
+      background-size:cover;
+      background-position:center;
+      height:93vh;
+      width:250vh;
+    }
+}
+
+
+.card-body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  text-decoration: none;
+  color: blue;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: red;
+}
