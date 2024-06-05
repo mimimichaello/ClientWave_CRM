@@ -1,5 +1,8 @@
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import redirect
+
+from tasks.models import Task
 
 def filter_customers(customers, query):
     if query:
@@ -31,3 +34,9 @@ def paginate_data(data, page_number, items_per_page=5):
         page_obj = paginator.page(paginator.num_pages)
 
     return page_obj
+
+
+def filter_tasks(tasks, status_filter_tasks):
+    if status_filter_tasks:
+        tasks = tasks.filter(status_task=status_filter_tasks)
+    return tasks

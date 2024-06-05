@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.urls import reverse_lazy
 
-from employees.utils import filter_customers, filter_orders, paginate_data
+from employees.utils import filter_tasks, filter_customers, filter_orders, paginate_data
 
 from django.views.generic.edit import CreateView
 from django.contrib.auth.views import LoginView
@@ -15,6 +15,7 @@ from employees.forms import EmployeeRegisterForm, EmployeeLoginForm
 from employees.models import Employee
 from customers.models import Customer
 from orders.models import Order
+from tasks.models import Task
 
 
 class RegisterEmployeeView(CreateView):
@@ -52,6 +53,12 @@ def personal_account(request):
     customers = Customer.objects.all()
     orders = Order.objects.all()
 
+    tasks = Task.objects.filter(assigned_to=employee)
+
+    status_filter_tasks = request.GET.get('status_task')
+    tasks = filter_tasks(tasks, status_filter_tasks)
+
+
     query = request.GET.get('query')
     status_filter = request.GET.get('status')
     payment_status_filter = request.GET.get('payment_status')
@@ -65,12 +72,17 @@ def personal_account(request):
     page_number_orders = request.GET.get("page_orders")
     page_obj_orders = paginate_data(orders, page_number_orders)
 
+    page_number_tasks = request.GET.get("page_tasks")
+    page_obj_tasks = paginate_data(tasks, page_number_tasks)
+
     context = {
         'employee': employee,
         'customers': customers,
         'orders': orders,
+        'tasks': tasks,
         'page_obj': page_obj,
         'page_obj_orders': page_obj_orders,
+        'page_obj_tasks': page_obj_tasks,
         'title': 'Личный кабинет'
     }
 

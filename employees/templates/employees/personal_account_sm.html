@@ -34,7 +34,7 @@
                 <div class="card-body">
                   <div class="d-flex flex-column align-items-center text-center mt-3">
                     <img src="https://yt3.googleusercontent.com/ytc/AGIKgqPUTn9hyJIRqLtm46wnUCLY6VOq2EcAYGyWRqPe=s900-c-k-c0x00ffffff-no-rj" alt="Admin" class="rounded-circle" width="150">
-                    <div class="mt-4">
+                    <div class="mt-3">
                       <h4 class="mt-3">{{ employee.first_name}} {{ employee.last_name}}</h4>
                       <p class="text-secondary mb-1">{{ employee.employee_category }}</p>
                     </div>
@@ -47,7 +47,7 @@
                 <div class="card-body">
                   <h3 class="mb-2 text-primary">Клиенты</h3>
                   <form method="GET" action="">
-                    <div class="input-group rounded" style="width: 300px; margin-left: 650px; margin-top: -40px">
+                    <div class="input-group input-group-sm mb-3 rounded" style="width: 300px; margin-left: 650px; margin-top: -49px;">
                         <input type="search" name="query" class="form-control rounded" placeholder="Поиск" aria-label="Search" aria-describedby="search-addon" />
                         <span class="input-group-text border-0" id="search-addon">
                             <button id="search-button" type="submit" class="btn btn-primary">
@@ -57,7 +57,7 @@
                     </div>
                 </form>
                     <hr class="bg-danger">
-                  <div class="mt-3">
+                  <div class="mt-1">
                       <table class="table table-bordered border-info">
                         <thead>
                           <tr>
@@ -131,33 +131,99 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-4 mb-3">
+            <div class="col-md-4 mb-3 mt-3">
               <div class="card bg-dark mh-100">
                 <div class="card-body">
-                  <div class="d-flex flex-column align-items-center text-center mt-3">
-                    <img src="https://yt3.googleusercontent.com/ytc/AGIKgqPUTn9hyJIRqLtm46wnUCLY6VOq2EcAYGyWRqPe=s900-c-k-c0x00ffffff-no-rj" alt="Admin" class="rounded-circle" width="150">
-                    <div class="mt-4">
-                      <h4 class="mt-3">{{ employee.first_name}} {{ employee.last_name}}</h4>
-                      <p class="text-secondary mb-1">{{ employee.employee_category }}</p>
-                    </div>
+                  <h3 class="mb-2 text-primary">Задачи</h3>
+                  <div class="mt-3">
+                  <div class="btn-group" role="group" aria-label="Task Status Filter">
+                    <a href="?status_task=" class="btn btn-outline-info text-decoration-none">Все</a>
+                    <a href="?status_task=Выполнено" class="btn btn-outline-success text-decoration-none">Выполнено</a>
+                    <a href="?status_task=В работе" class="btn btn-outline-warning text-decoration-none">В работе</a>
+                    <a href="?status_task=Просрочено" class="btn btn-outline-danger text-decoration-none">Просрочено</a>
+                  </div>
+                  </div>
+                    <hr class="bg-danger">
+                  <div class="mt-3">
+                    <table class="table table-bordered border-info">
+                      <thead>
+                          <tr>
+                              <th scope="col">№</th>
+                              <th scope="col">Задача</th>
+                              <th scope="col">Дедлайн</th>
+                              <th scope="col">Статус</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          {% for task in page_obj_tasks %}
+                              <tr class="">
+                                  <th scope="row">{{ forloop.counter }}</th>
+                                  <td>{{ task.name }}</td>
+                                  <td>{{ task.deadline }}</td>
+                                  <td>{{ task.status_task }}</td>
+                              </tr>
+                          {% endfor %}
+                      </tbody>
+                      <div class="pagination" style="margin-top: -25px;">
+                        <span class="step-links">
+                          {% if page_obj_tasks.has_other_pages %}
+                          <nav aria-label="Page navigation example">
+                              <ul class="pagination">
+                                  {% if page_obj_tasks.has_previous %}
+                                      <li class="page-item">
+                                          <a class="page-link" href="?page_tasks=1" aria-label="First">
+                                              <span aria-hidden="true">&laquo;&laquo;</span>
+                                          </a>
+                                      </li>
+                                      <li class="page-item">
+                                          <a class="page-link" href="?page_tasks={{ page_obj_tasks.previous_page_number }}" aria-label="Previous">
+                                              <span aria-hidden="true">&laquo;</span>
+                                          </a>
+                                      </li>
+                                  {% endif %}
+
+                                  {% for num in page_obj_tasks.paginator.page_range %}
+                                      <li class="page-item {% if num == page_obj_tasks.number %}active{% endif %}">
+                                          <a class="page-link" href="?page_tasks={{ num }}">{{ num }}</a>
+                                      </li>
+                                  {% endfor %}
+
+                                  {% if page_obj_tasks.has_next %}
+                                      <li class="page-item">
+                                          <a class="page-link" href="?page_tasks={{ page_obj_tasks.next_page_number }}" aria-label="Next">
+                                              <span aria-hidden="true">&raquo;</span>
+                                          </a>
+                                      </li>
+                                      <li class="page-item">
+                                          <a class="page-link" href="?page_tasks={{ page_obj_tasks.paginator.num_pages }}" aria-label="Last">
+                                              <span aria-hidden="true">&raquo;&raquo;</span>
+                                          </a>
+                                      </li>
+                                  {% endif %}
+                              </ul>
+                          </nav>
+                      {% endif %}
+                        </span>
+                      </div>
+                  </table>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-8 mt-3">
               <div class="card bg-dark">
                 <div class="card-body">
                   <h3 class="mb-2 text-primary">Заказы</h3>
                   <div class="mt-3">
                     <div class="btn-group" role="group" aria-label="Order Status Filter">
-                        <a href="?status=" class="btn btn-outline-primary text-decoration-none">Все</a>
-                        <a href="?status=В обработке" class="btn btn-outline-primary text-decoration-none">В обработке</a>
-                        <a href="?status=Выполнен" class="btn btn-outline-primary text-decoration-none">Выполнены</a>
-                        <a href="?status=Отменен" class="btn btn-outline-primary text-decoration-none">Отменен</a>
-                        <a href="?status=Ожидает отправки" class="btn btn-outline-primary text-decoration-none">Ожидает отправки</a>
-                        <a href="?status=Отправлен" class="btn btn-outline-primary text-decoration-none">Отправлен</a>
-                        <a href="?payment_status=Оплачен" class="btn btn-outline-info text-decoration-none">Оплачен</a>
+                        <a href="?status=" class="btn btn-outline-secondary  text-decoration-none">Все</a>
+                        <a href="?status=В обработке" class="btn btn-outline-secondary  text-decoration-none">В обработке</a>
+                        <a href="?status=Выполнен" class="btn btn-outline-secondary  text-decoration-none">Выполнены</a>
+                        <a href="?status=Отменен" class="btn btn-outline-secondary  text-decoration-none">Отменен</a>
+                        <a href="?status=Ожидает отправки" class="btn btn-outline-secondary  text-decoration-none">Ожидает отправки</a>
+                        <a href="?status=Отправлен" class="btn btn-outline-secondary  text-decoration-none">Отправлен</a>
                         <a href="?payment_status=Не оплачен" class="btn btn-outline-info text-decoration-none">Не оплачен</a>
+                        <a href="?payment_status=Оплачен" class="btn btn-outline-info text-decoration-none">Оплачен</a>
                     </div>
                     <hr class="bg-danger">
                   <div class="mt-3">
